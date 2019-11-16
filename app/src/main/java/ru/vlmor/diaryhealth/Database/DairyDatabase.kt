@@ -11,13 +11,13 @@ import ru.vlmor.diaryhealth.Model.DateConverter
 
 @Database(entities = [Dairy::class], version = 1)
 @TypeConverters(DateConverter::class)
-abstract class DairyDatabase: RoomDatabase() {
+abstract class DairyDatabase: RoomDatabase(), DairyHealthDao {
     abstract fun dairyDao(): DairyHealthDao
 
     companion object{
         private var instance: DairyDatabase? = null
 
-        fun getInstance(context: Context): DairyDatabase? {
+        fun getInstance(context: Context): DairyDatabase {
             if (instance == null) {
                 synchronized(DairyDatabase::class) {
                     instance = Room.databaseBuilder(context.applicationContext,
@@ -25,10 +25,11 @@ abstract class DairyDatabase: RoomDatabase() {
                         .build()
                 }
             }
-            return instance
+            return instance!!
         }
 
         fun destroyInstance() {
+            instance?.close()
             instance = null
         }
     }
