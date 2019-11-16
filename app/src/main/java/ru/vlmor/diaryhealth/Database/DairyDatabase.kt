@@ -9,28 +9,12 @@ import ru.vlmor.diaryhealth.Dao.DairyHealthDao
 import ru.vlmor.diaryhealth.Model.Dairy
 import ru.vlmor.diaryhealth.Model.DateConverter
 
+//https://medium.com/mindorks/android-architecture-components-room-and-kotlin-f7b725c8d1d
+//https://developer.android.com/training/data-storage/room/testing-db
+//https://gabrieltanner.org/blog/android-room
+
 @Database(entities = [Dairy::class], version = 1)
 @TypeConverters(DateConverter::class)
-abstract class DairyDatabase: RoomDatabase(), DairyHealthDao {
+abstract class DairyDatabase: RoomDatabase() {
     abstract fun dairyDao(): DairyHealthDao
-
-    companion object{
-        private var instance: DairyDatabase? = null
-
-        fun getInstance(context: Context): DairyDatabase {
-            if (instance == null) {
-                synchronized(DairyDatabase::class) {
-                    instance = Room.databaseBuilder(context.applicationContext,
-                        DairyDatabase::class.java, "dairy_health")
-                        .build()
-                }
-            }
-            return instance!!
-        }
-
-        fun destroyInstance() {
-            instance?.close()
-            instance = null
-        }
-    }
 }

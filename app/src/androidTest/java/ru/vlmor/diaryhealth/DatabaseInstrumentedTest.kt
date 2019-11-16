@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.After
 
 import org.junit.Test
@@ -24,15 +25,19 @@ class DatabaseInstrumentedTest{
 
     @Before
     fun createDb() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        db = DairyDatabase.getInstance(context)
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        db = Room
+            .inMemoryDatabaseBuilder(context, DairyDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
         dairyDao = db.dairyDao()
     }
 
     @After
     @Throws(IOException::class)
     fun closeDb() {
-        DairyDatabase.destroyInstance()
+        db.clearAllTables()
+        db.close()
     }
 
     @Test
@@ -42,8 +47,8 @@ class DatabaseInstrumentedTest{
         dairy.pressure.dia=100
         dairy.pressure.sys=42
 
-        var id = dairyDao.insert(dairy)
-        var dairyActual = dairyDao.get(id)
+        var id = dairyDao.insertDairy(dairy)
+        var dairyActual = dairyDao.getDairy(id)
         assertEquals(dairy.pressure.sys, dairyActual.pressure.sys)
     }
 
