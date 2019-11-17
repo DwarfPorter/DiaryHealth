@@ -40,7 +40,7 @@ class DatabaseInstrumentedTest{
 
     @Test
     @Throws(Exception::class)
-    fun insertThenRead() {
+    suspend fun insertThenRead() {
         val dairy = Dairy()
         dairy.pressure.dia=100
         dairy.pressure.sys=42
@@ -53,7 +53,7 @@ class DatabaseInstrumentedTest{
 
     @Test
     @Throws(Exception::class)
-    fun insertThenReadAll() {
+    suspend fun insertThenReadAll() {
         val dairy = Dairy()
         dairy.pressure.dia=81
         dairy.pressure.sys=42
@@ -66,7 +66,7 @@ class DatabaseInstrumentedTest{
     }
     @Test
     @Throws(Exception::class)
-    fun insertThenUpdate() {
+    suspend fun insertThenUpdate() {
         val dairy = Dairy()
         dairy.pressure.dia=81
         dairy.pressure.sys=42
