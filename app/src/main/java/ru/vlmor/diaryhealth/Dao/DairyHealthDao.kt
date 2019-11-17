@@ -9,14 +9,14 @@ interface DairyHealthDao{
     fun getAll(): List<Dairy>
 
     @Query("SELECT * FROM Dairy WHERE id = :id")
-    fun getDairy(id: Long): Dairy
+    fun get(id: Long): Dairy
 
     @Insert
-    fun insertDairy(dairy: Dairy): Long
+    fun insert(dairy: Dairy): Long
 
     @Update
-    fun updateDairy(dairy: Dairy)
+    fun update(dairy: Dairy)
 
     @Delete
-    fun deleteDairy(dairy: Dairy)
+    fun delete(dairy: Dairy)
 }

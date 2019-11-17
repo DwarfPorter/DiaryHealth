@@ -1,8 +1,6 @@
 package ru.vlmor.diaryhealth
 
-import android.content.Context
 import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.After
@@ -42,14 +40,43 @@ class DatabaseInstrumentedTest{
 
     @Test
     @Throws(Exception::class)
-    fun writeUserAndReadInList() {
+    fun insertThenRead() {
         val dairy = Dairy()
         dairy.pressure.dia=100
         dairy.pressure.sys=42
 
-        var id = dairyDao.insertDairy(dairy)
-        var dairyActual = dairyDao.getDairy(id)
+        var id = dairyDao.insert(dairy)
+        var dairyActual = dairyDao.get(id)
         assertEquals(dairy.pressure.sys, dairyActual.pressure.sys)
+        dairyDao.delete(dairy)
     }
 
+    @Test
+    @Throws(Exception::class)
+    fun insertThenReadAll() {
+        val dairy = Dairy()
+        dairy.pressure.dia=81
+        dairy.pressure.sys=42
+
+        var id = dairyDao.insert(dairy)
+        var dairiesActual = dairyDao.getAll()
+        assertEquals(1, dairiesActual.size)
+        assertEquals(dairy.pressure.dia, dairiesActual.get(0).pressure.dia)
+        dairyDao.delete(dairy)
+    }
+    @Test
+    @Throws(Exception::class)
+    fun insertThenUpdate() {
+        val dairy = Dairy()
+        dairy.pressure.dia=81
+        dairy.pressure.sys=42
+
+        var id = dairyDao.insert(dairy)
+        var dairyForUpdate = dairyDao.get(id)
+        dairyForUpdate.pressure.dia = 102
+        dairyDao.update(dairyForUpdate)
+        var dairyActual = dairyDao.get(id)
+        assertEquals(dairyForUpdate.pressure.dia, dairyActual.pressure.dia)
+        dairyDao.delete(dairy)
+    }
 }
