@@ -17,4 +17,17 @@ import ru.vlmor.diaryhealth.Model.DateConverter
 @TypeConverters(DateConverter::class)
 abstract class DairyDatabase: RoomDatabase() {
     abstract fun dairyDao(): DairyHealthDao
+
+    companion object {
+        @Volatile private var instance: DairyDatabase? = null
+        private val LOCK = Any()
+
+        operator fun invoke(context: Context)= instance ?: synchronized(LOCK){
+            instance ?: buildDatabase(context).also { instance = it}
+        }
+
+        private fun buildDatabase(context: Context) = Room.databaseBuilder(context,
+            DairyDatabase::class.java, "dairy_health.db")
+            .build()
+    }
 }
