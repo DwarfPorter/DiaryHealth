@@ -1,5 +1,6 @@
 package ru.vlmor.diaryhealth
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.room.Room
@@ -12,6 +13,7 @@ import org.junit.runner.RunWith
 
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import ru.vlmor.diaryhealth.Dao.DairyHealthDao
 import ru.vlmor.diaryhealth.Database.DairyDatabase
 import ru.vlmor.diaryhealth.Model.Dairy
@@ -21,7 +23,10 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
 @RunWith(AndroidJUnit4::class)
-class DatabaseInstrumentedTest{
+class DatabaseInstrumentedTest {
+
+    @get:Rule
+    var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var dairyDao: DairyHealthDao
     private lateinit var db: DairyDatabase
@@ -47,21 +52,13 @@ class DatabaseInstrumentedTest{
     @Throws(Exception::class)
     fun insertThenRead() {
         val dairy = Dairy()
-        dairy.pressure.dia=100
-        dairy.pressure.sys=42
+        dairy.pressure.dia = 100
+        dairy.pressure.sys = 42
 
         var id = dairyDao.insert(dairy)
-        var dairyActual = dairyDao.get(id)
-        var answer: Dairy? = null
-        val latch = CountDownLatch(1)
-        val observer = Observer<Dairy> {
-            t -> answer = t
-            latch.countDown()
-        }
-        dairyActual.observeForever(observer)
-        latch.await()
+        var dairyActual = dairyDao.get(id).getOrAwaitValue()
 
-        assertEquals(42, answer!!.pressure.sys)
+        assertEquals(42, dairyActual.pressure.sys)
         dairyDao.delete(dairy)
     }
 
@@ -69,28 +66,29 @@ class DatabaseInstrumentedTest{
     @Throws(Exception::class)
     fun insertThenReadAll() {
         val dairy = Dairy()
-        dairy.pressure.dia=81
-        dairy.pressure.sys=42
+        dairy.pressure.dia = 81
+        dairy.pressure.sys = 42
 
         var id = dairyDao.insert(dairy)
-        var dairiesActual = dairyDao.getAll()
-        assertEquals(1, dairiesActual.value!!.size)
-        assertEquals(81, dairiesActual.value!!.get(0).pressure.dia)
+        var dairiesActual = dairyDao.getAll().getOrAwaitValue()
+        assertEquals(1, dairiesActual.size)
+        assertEquals(81, dairiesActual.get(0).pressure.dia)
         dairyDao.delete(dairy)
     }
+
     @Test
     @Throws(Exception::class)
     fun insertThenUpdate() {
         val dairy = Dairy()
-        dairy.pressure.dia=81
-        dairy.pressure.sys=42
+        dairy.pressure.dia = 81
+        dairy.pressure.sys = 42
 
         var id = dairyDao.insert(dairy)
-        var dairyForUpdate = dairyDao.get(id)
-        dairyForUpdate.value!!.pressure.dia = 102
-        dairyDao.update(dairyForUpdate.value!!)
-        var dairyActual = dairyDao.get(id)
-        assertEquals(102, dairyActual.value!!.pressure.dia)
+        var dairyForUpdate = dairyDao.get(id).getOrAwaitValue()
+        dairyForUpdate.pressure.dia = 102
+        dairyDao.update(dairyForUpdate)
+        var dairyActual = dairyDao.get(id).getOrAwaitValue()
+        assertEquals(102, dairyActual.pressure.dia)
         dairyDao.delete(dairy)
     }
 
