@@ -1,5 +1,7 @@
 package ru.vlmor.diaryhealth
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -14,6 +16,9 @@ import ru.vlmor.diaryhealth.Dao.DairyHealthDao
 import ru.vlmor.diaryhealth.Database.DairyDatabase
 import ru.vlmor.diaryhealth.Model.Dairy
 import java.io.IOException
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 @RunWith(AndroidJUnit4::class)
 class DatabaseInstrumentedTest{
@@ -47,7 +52,16 @@ class DatabaseInstrumentedTest{
 
         var id = dairyDao.insert(dairy)
         var dairyActual = dairyDao.get(id)
-        assertEquals(dairy.pressure.sys, dairyActual.pressure.sys)
+        var answer: Dairy? = null
+        val latch = CountDownLatch(1)
+        val observer = Observer<Dairy> {
+            t -> answer = t
+            latch.countDown()
+        }
+        dairyActual.observeForever(observer)
+        latch.await()
+
+        assertEquals(42, answer!!.pressure.sys)
         dairyDao.delete(dairy)
     }
 
@@ -60,8 +74,8 @@ class DatabaseInstrumentedTest{
 
         var id = dairyDao.insert(dairy)
         var dairiesActual = dairyDao.getAll()
-        assertEquals(1, dairiesActual.size)
-        assertEquals(dairy.pressure.dia, dairiesActual.get(0).pressure.dia)
+        assertEquals(1, dairiesActual.value!!.size)
+        assertEquals(81, dairiesActual.value!!.get(0).pressure.dia)
         dairyDao.delete(dairy)
     }
     @Test
@@ -73,10 +87,52 @@ class DatabaseInstrumentedTest{
 
         var id = dairyDao.insert(dairy)
         var dairyForUpdate = dairyDao.get(id)
-        dairyForUpdate.pressure.dia = 102
-        dairyDao.update(dairyForUpdate)
+        dairyForUpdate.value!!.pressure.dia = 102
+        dairyDao.update(dairyForUpdate.value!!)
         var dairyActual = dairyDao.get(id)
-        assertEquals(dairyForUpdate.pressure.dia, dairyActual.pressure.dia)
+        assertEquals(102, dairyActual.value!!.pressure.dia)
         dairyDao.delete(dairy)
+    }
+
+
+    //https://stackoverflow.com/questions/44270688/unit-testing-room-and-livedata
+    fun <T> LiveData<T>.getOrAwaitValue(
+        time: Long = 2,
+        timeUnit: TimeUnit = TimeUnit.SECONDS
+    ): T {
+        var data: T? = null
+        val latch = CountDownLatch(1)
+        val observer = object : Observer<T> {
+            override fun onChanged(o: T?) {
+                data = o
+                latch.countDown()
+                this@getOrAwaitValue.removeObserver(this)
+            }
+        }
+
+        this.observeForever(observer)
+
+        // Don't wait indefinitely if the LiveData is not set.
+        if (!latch.await(time, timeUnit)) {
+            throw TimeoutException("LiveData value was never set.")
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        return data as T
+    }
+
+    private fun <T> LiveData<T>.blockingObserve(): T? {
+        var value: T? = null
+        val latch = CountDownLatch(1)
+
+        val observer = Observer<T> { t ->
+            value = t
+            latch.countDown()
+        }
+
+        observeForever(observer)
+
+        latch.await(2, TimeUnit.SECONDS)
+        return value
     }
 }
