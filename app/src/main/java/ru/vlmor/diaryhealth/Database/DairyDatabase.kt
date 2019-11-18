@@ -12,6 +12,7 @@ import ru.vlmor.diaryhealth.Model.DateConverter
 //https://medium.com/mindorks/android-architecture-components-room-and-kotlin-f7b725c8d1d
 //https://developer.android.com/training/data-storage/room/testing-db
 //https://gabrieltanner.org/blog/android-room
+//https://medium.com/@nyavorskii/%D0%B7%D0%BD%D0%B0%D0%BA%D0%BE%D0%BC%D1%81%D1%82%D0%B2%D0%BE-%D1%81-android-architecture-components-%D0%B8-mvvm-%D0%BF%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B4-29654672f4ab
 
 @Database(entities = [Dairy::class], version = 1)
 @TypeConverters(DateConverter::class)
