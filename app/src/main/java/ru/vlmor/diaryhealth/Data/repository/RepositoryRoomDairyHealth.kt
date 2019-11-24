@@ -18,12 +18,13 @@ class RepositoryRoomDairyHealth (val dairyDatabase: DairyDatabase) : RepositoryD
         return dairyDatabase.dairyDao().insert(dairy)
     }
 
-    override fun update(dairy: Dairy) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun update(dairy: Dairy): LiveData<Dairy> {
+        dairyDatabase.dairyDao().update(dairy)
+        return dairyDatabase.dairyDao().get(dairy.id!!)
     }
 
     override fun delete(dairy: Dairy) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        dairyDatabase.dairyDao().delete(dairy)
     }
 
 }

@@ -7,6 +7,6 @@ interface RepositoryDairyHealth{
     fun getAll(): LiveData<List<Dairy>>
     fun get(id: Long): LiveData<Dairy>
     fun insert(dairy: Dairy): Long
-    fun update(dairy: Dairy)
+    fun update(dairy: Dairy): LiveData<Dairy>
     fun delete(dairy: Dairy)
 }

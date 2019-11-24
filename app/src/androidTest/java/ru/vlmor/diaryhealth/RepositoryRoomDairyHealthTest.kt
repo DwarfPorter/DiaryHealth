@@ -6,92 +6,58 @@ import androidx.lifecycle.Observer
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import org.junit.After
-
-import org.junit.Test
-import org.junit.runner.RunWith
-
-import org.junit.Assert.*
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
-import ru.vlmor.diaryhealth.data.dao.DairyHealthDao
+import org.junit.Test
+import org.junit.runner.RunWith
 import ru.vlmor.diaryhealth.data.database.DairyDatabase
 import ru.vlmor.diaryhealth.data.model.Dairy
-import java.io.IOException
+import ru.vlmor.diaryhealth.data.repository.RepositoryRoomDairyHealth
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
 @RunWith(AndroidJUnit4::class)
-class DatabaseInstrumentedTest {
-
+class RepositoryRoomDairyHealthTest{
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private lateinit var dairyDao: DairyHealthDao
-    private lateinit var db: DairyDatabase
+    lateinit var repositoryRoomDairyHealth : RepositoryRoomDairyHealth
 
     @Before
     fun createDb() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        db = Room
+        val db = Room
             .inMemoryDatabaseBuilder(context, DairyDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-        dairyDao = db.dairyDao()
-    }
-
-    @After
-    @Throws(IOException::class)
-    fun closeDb() {
-        db.clearAllTables()
-        db.close()
+        repositoryRoomDairyHealth = RepositoryRoomDairyHealth(db);
     }
 
     @Test
     @Throws(Exception::class)
-    fun insertThenRead() {
+    fun insertThenRead_Update_ReadAll_Delete() {
         val dairy = Dairy()
         dairy.pressure.dia = 100
         dairy.pressure.sys = 42
 
-        var id = dairyDao.insert(dairy)
-        var dairyActual = dairyDao.get(id).getOrAwaitValue()
+        var id = repositoryRoomDairyHealth.insert(dairy)
+        var dairyRead = repositoryRoomDairyHealth.get(id).getOrAwaitValue()
+        Assert.assertEquals(42, dairyRead.pressure.sys)
 
-        assertEquals(42, dairyActual.pressure.sys)
-        dairyDao.delete(dairy)
+        dairyRead.pressure.sys = 81;
+        var dairyUpdated = repositoryRoomDairyHealth.update(dairyRead).getOrAwaitValue()
+        Assert.assertEquals(81, dairyUpdated.pressure.sys)
+
+        var dairiesReadAll = repositoryRoomDairyHealth.getAll().getOrAwaitValue()
+        Assert.assertEquals(1, dairiesReadAll.size)
+        Assert.assertEquals(81, dairiesReadAll.get(0).pressure.sys)
+
+        repositoryRoomDairyHealth.delete(dairyUpdated)
+        var dairiesReadAllAfterDelete = repositoryRoomDairyHealth.getAll().getOrAwaitValue()
+        Assert.assertEquals(0, dairiesReadAllAfterDelete.size)
     }
-
-    @Test
-    @Throws(Exception::class)
-    fun insertThenReadAll() {
-        val dairy = Dairy()
-        dairy.pressure.dia = 81
-        dairy.pressure.sys = 42
-
-        var id = dairyDao.insert(dairy)
-        var dairiesActual = dairyDao.getAll().getOrAwaitValue()
-        assertEquals(1, dairiesActual.size)
-        assertEquals(81, dairiesActual.get(0).pressure.dia)
-        dairyDao.delete(dairy)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun insertThenUpdate() {
-        val dairy = Dairy()
-        dairy.pressure.dia = 81
-        dairy.pressure.sys = 42
-
-        var id = dairyDao.insert(dairy)
-        var dairyForUpdate = dairyDao.get(id).getOrAwaitValue()
-        dairyForUpdate.pressure.dia = 102
-        dairyDao.update(dairyForUpdate)
-        var dairyActual = dairyDao.get(id).getOrAwaitValue()
-        assertEquals(102, dairyActual.pressure.dia)
-        dairyDao.delete(dairy)
-    }
-
 
     //https://stackoverflow.com/questions/44270688/unit-testing-room-and-livedata
     fun <T> LiveData<T>.getOrAwaitValue(
