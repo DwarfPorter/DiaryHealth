@@ -1,4 +1,4 @@
-package ru.vlmor.diaryhealth.Model
+package ru.vlmor.diaryhealth.data.model
 
 import androidx.room.TypeConverter
 import java.util.*

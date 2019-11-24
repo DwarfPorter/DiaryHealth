@@ -14,9 +14,9 @@ import org.junit.runner.RunWith
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
-import ru.vlmor.diaryhealth.Dao.DairyHealthDao
-import ru.vlmor.diaryhealth.Database.DairyDatabase
-import ru.vlmor.diaryhealth.Model.Dairy
+import ru.vlmor.diaryhealth.Data.Dao.DairyHealthDao
+import ru.vlmor.diaryhealth.Data.Dao.Database.DairyDatabase
+import ru.vlmor.diaryhealth.Data.Model.Dairy
 import java.io.IOException
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit

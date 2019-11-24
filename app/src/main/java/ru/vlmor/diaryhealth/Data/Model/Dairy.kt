@@ -1,4 +1,4 @@
-package ru.vlmor.diaryhealth.Model
+package ru.vlmor.diaryhealth.data.model
 
 import androidx.room.*
 import java.util.*
@@ -9,5 +9,6 @@ data class Dairy(
     @Embedded var pressure: Pressure,
     @ColumnInfo(name = "Date") var date: Date
 ){
-    constructor(): this(null, Pressure(0,0,0),Date())
+    constructor(): this(null,
+        Pressure(0, 0, 0),Date())
 }

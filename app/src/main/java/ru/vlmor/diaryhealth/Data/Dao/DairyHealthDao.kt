@@ -1,8 +1,8 @@
-package ru.vlmor.diaryhealth.Dao
+package ru.vlmor.diaryhealth.data.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import ru.vlmor.diaryhealth.Model.Dairy
+import ru.vlmor.diaryhealth.data.model.Dairy
 
 @Dao
 interface DairyHealthDao{
