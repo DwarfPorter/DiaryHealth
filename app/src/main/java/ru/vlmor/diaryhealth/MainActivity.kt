@@ -5,11 +5,19 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 
 import kotlinx.android.synthetic.main.activity_main.*
+import ru.vlmor.diaryhealth.ViewModel.DairiesViewModel
+import ru.vlmor.diaryhealth.ViewModel.DairyHealthViewModel
 
 //https://developer.android.com/topic/libraries/architecture
 class MainActivity : AppCompatActivity() {
+
+    private val dairyViewModel: DairiesViewModel by lazy{
+        ViewModelProviders.of(this).get(DairiesViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
