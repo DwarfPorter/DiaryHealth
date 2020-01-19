@@ -1,16 +1,13 @@
 package ru.vlmor.diaryhealth
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import androidx.lifecycle.ViewModelProvider
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
-
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.vlmor.diaryhealth.ViewModel.DairiesViewModel
-import ru.vlmor.diaryhealth.ViewModel.DairyHealthViewModel
 
 //https://developer.android.com/topic/libraries/architecture
 class MainActivity : AppCompatActivity() {
