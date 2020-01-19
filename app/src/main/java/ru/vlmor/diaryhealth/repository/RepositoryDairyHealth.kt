@@ -1,4 +1,4 @@
-package ru.vlmor.diaryhealth.data.repository
+package ru.vlmor.diaryhealth.repository
 
 import androidx.lifecycle.LiveData
 import ru.vlmor.diaryhealth.data.model.Dairy

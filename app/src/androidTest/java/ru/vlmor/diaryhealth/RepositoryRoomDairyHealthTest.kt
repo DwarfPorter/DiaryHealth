@@ -13,7 +13,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import ru.vlmor.diaryhealth.data.database.DairyDatabase
 import ru.vlmor.diaryhealth.data.model.Dairy
-import ru.vlmor.diaryhealth.data.repository.RepositoryRoomDairyHealth
+import ru.vlmor.diaryhealth.repository.RepositoryRoomDairyHealth
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
