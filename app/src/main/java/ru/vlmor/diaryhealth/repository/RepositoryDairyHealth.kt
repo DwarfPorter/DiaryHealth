@@ -9,4 +9,5 @@ interface RepositoryDairyHealth{
     fun insert(dairy: Dairy): Long
     fun update(dairy: Dairy): LiveData<Dairy>
     fun delete(dairy: Dairy)
+    fun deleteAll()
 }

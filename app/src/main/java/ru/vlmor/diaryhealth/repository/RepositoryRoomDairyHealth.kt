@@ -27,4 +27,8 @@ class RepositoryRoomDairyHealth (val dairyDatabase: DairyDatabase) : RepositoryD
         dairyDatabase.dairyDao().delete(dairy)
     }
 
+    override fun deleteAll() {
+        dairyDatabase.dairyDao().deleteAll()
+    }
+
 }

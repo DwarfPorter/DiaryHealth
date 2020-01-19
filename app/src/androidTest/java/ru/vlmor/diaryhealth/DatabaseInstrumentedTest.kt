@@ -78,6 +78,18 @@ class DatabaseInstrumentedTest {
 
     @Test
     @Throws(Exception::class)
+    fun deleteAll(){
+        val dairy = Dairy()
+        dairy.pressure.dia = 120
+        var id = dairyDao.insert(dairy)
+        assertTrue(id > 0)
+        dairyDao.deleteAll()
+        var dairiesActual = dairyDao.getAll().getOrAwaitValue()
+        assertEquals(0, dairiesActual.size)
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun insertThenUpdate() {
         val dairy = Dairy()
         dairy.pressure.dia = 81

@@ -20,4 +20,7 @@ interface DairyHealthDao{
 
     @Delete
     fun delete(dairy: Dairy)
+
+    @Query("DELETE FROM Dairy")
+    fun deleteAll()
 }

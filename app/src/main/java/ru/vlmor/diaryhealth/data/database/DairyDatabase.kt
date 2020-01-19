@@ -33,6 +33,7 @@ abstract class DairyDatabase: RoomDatabase() {
 
         private fun buildDatabase(context: Context) = Room.databaseBuilder(context,
             DairyDatabase::class.java, "dairy_health.db")
-            .build()
+                .allowMainThreadQueries()
+                .build()
     }
 }

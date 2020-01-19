@@ -43,6 +43,11 @@ class RepositoryRoomDairyHealthTest{
         dairy.pressure.sys = 42
 
         var id = repositoryRoomDairyHealth.insert(dairy)
+
+        val dairy2 = Dairy()
+        dairy2.pressure.dia = 120
+        repositoryRoomDairyHealth.insert(dairy2)
+
         var dairyRead = repositoryRoomDairyHealth.get(id).getOrAwaitValue()
         Assert.assertEquals(42, dairyRead.pressure.sys)
 
@@ -51,11 +56,15 @@ class RepositoryRoomDairyHealthTest{
         Assert.assertEquals(81, dairyUpdated.pressure.sys)
 
         var dairiesReadAll = repositoryRoomDairyHealth.getAll().getOrAwaitValue()
-        Assert.assertEquals(1, dairiesReadAll.size)
+        Assert.assertEquals(2, dairiesReadAll.size)
         Assert.assertEquals(81, dairiesReadAll.get(0).pressure.sys)
 
         repositoryRoomDairyHealth.delete(dairyUpdated)
         var dairiesReadAllAfterDelete = repositoryRoomDairyHealth.getAll().getOrAwaitValue()
+        Assert.assertEquals(1, dairiesReadAllAfterDelete.size)
+
+        repositoryRoomDairyHealth.deleteAll()
+        dairiesReadAllAfterDelete = repositoryRoomDairyHealth.getAll().getOrAwaitValue()
         Assert.assertEquals(0, dairiesReadAllAfterDelete.size)
     }
 
