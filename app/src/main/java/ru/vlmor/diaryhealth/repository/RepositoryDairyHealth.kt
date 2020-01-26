@@ -1,13 +1,12 @@
 package ru.vlmor.diaryhealth.repository
 
-import androidx.lifecycle.LiveData
 import ru.vlmor.diaryhealth.data.model.Dairy
 
 interface RepositoryDairyHealth{
-    fun getAll(): LiveData<List<Dairy>>
-    fun get(id: Long): LiveData<Dairy>
-    fun insert(dairy: Dairy): Long
-    fun update(dairy: Dairy): LiveData<Dairy>
-    fun delete(dairy: Dairy)
-    fun deleteAll()
+    suspend fun getAll(): List<Dairy>
+    suspend fun get(id: Long): Dairy
+    suspend fun insert(dairy: Dairy): Long
+    suspend fun update(dairy: Dairy): Dairy
+    suspend fun delete(dairy: Dairy)
+    suspend fun deleteAll()
 }

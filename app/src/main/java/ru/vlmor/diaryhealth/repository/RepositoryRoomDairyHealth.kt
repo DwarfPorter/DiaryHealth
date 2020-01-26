@@ -3,32 +3,34 @@ package ru.vlmor.diaryhealth.repository
 import androidx.lifecycle.LiveData
 import ru.vlmor.diaryhealth.data.database.DairyDatabase
 import ru.vlmor.diaryhealth.data.model.Dairy
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class RepositoryRoomDairyHealth (val dairyDatabase: DairyDatabase) : RepositoryDairyHealth{
 
-    override fun getAll(): LiveData<List<Dairy>> {
-        return dairyDatabase.dairyDao().getAll()
+    override suspend fun getAll(): List<Dairy> = suspendCoroutine{c ->
+        c.resume(dairyDatabase.dairyDao().getAll())
     }
 
-    override fun get(id: Long): LiveData<Dairy> {
-        return dairyDatabase.dairyDao().get(id)
+    override suspend fun get(id: Long): Dairy = suspendCoroutine { c ->
+        c.resume(dairyDatabase.dairyDao().get(id))
     }
 
-    override fun insert(dairy: Dairy): Long {
-        return dairyDatabase.dairyDao().insert(dairy)
+    override suspend fun insert(dairy: Dairy): Long = suspendCoroutine{c ->
+        c.resume(dairyDatabase.dairyDao().insert(dairy))
     }
 
-    override fun update(dairy: Dairy): LiveData<Dairy> {
-        dairyDatabase.dairyDao().update(dairy)
-        return dairyDatabase.dairyDao().get(dairy.id!!)
+    override suspend fun update(dairy: Dairy): Dairy = suspendCoroutine {c -> {
+            dairyDatabase.dairyDao().update(dairy)
+            c.resume(dairyDatabase.dairyDao().get(dairy.id!!))
+        }
     }
 
-    override fun delete(dairy: Dairy) {
+    override suspend fun delete(dairy: Dairy) = suspendCoroutine<Unit> {c ->
         dairyDatabase.dairyDao().delete(dairy)
     }
 
-    override fun deleteAll() {
+    override suspend fun deleteAll() = suspendCoroutine<Unit> {c ->
         dairyDatabase.dairyDao().deleteAll()
     }
-
 }

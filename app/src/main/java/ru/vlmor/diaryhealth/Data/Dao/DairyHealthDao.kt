@@ -7,10 +7,10 @@ import ru.vlmor.diaryhealth.data.model.Dairy
 @Dao
 interface DairyHealthDao{
     @Query("SELECT * FROM Dairy")
-    fun getAll(): LiveData<List<Dairy>>
+    fun getAll(): List<Dairy>
 
     @Query("SELECT * FROM Dairy WHERE id = :id")
-    fun get(id: Long): LiveData<Dairy>
+    fun get(id: Long): Dairy
 
     @Insert
     fun insert(dairy: Dairy): Long
